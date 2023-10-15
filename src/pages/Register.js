@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import React, { useContext, useState } from "react";
+import { register } from "../api/auth";
+import UserContext from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [userInfo, setUserInfo] = useState({});
+  const [user, setUser] = useContext(UserContext);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     if (e.target.name === "image") {
@@ -11,9 +17,18 @@ const Register = () => {
     }
   };
 
+  const { mutate: register_mutate } = useMutation({
+    mutationKey: ["register_"],
+    mutationFn: () => register(userInfo),
+    onSuccess: () => {
+      setUser(true);
+      navigate("/");
+    },
+  });
+
   const handleFormSubmit = (e) => {
-    // e.preventDefault();
-    // Add register logic here
+    e.preventDefault();
+    register_mutate();
   };
 
   return (
